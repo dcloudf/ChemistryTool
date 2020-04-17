@@ -1,5 +1,6 @@
 from .abc import ReactionABC, MoleculeListABC
 from .molecule import Molecule
+from collections import Iterable
 
 
 class MoleculeList(MoleculeListABC):
@@ -17,11 +18,23 @@ class MoleculeList(MoleculeListABC):
         return self._data[i]
 
     def __setitem__(self, i, molecule):
-        pass  # todo: homework!
+        if isinstance(i, slice):
+            if issubclass(molecule, Iterable):
+                self._data[i] = molecule
+            else:
+                raise TypeError('Can set only for iterable data')
+        elif isinstance(i, int) and isinstance(molecule, Molecule):
+            self._data[i] = molecule
+        else:
+            return TypeError
+
+    def __repr__(self):
+        return self._data
 
 
 class Reaction(ReactionABC):
     def __init__(self):
+        super().__init__()
         self._reactants = MoleculeList()
         self._products = MoleculeList()
 
