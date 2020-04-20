@@ -19,7 +19,18 @@ class MoleculeList(MoleculeListABC):
 
     def __setitem__(self, i, molecule):
         test, molecule = tee(molecule, 2)
-        pass  # todo: homework!
+        if isinstance(i, slice):
+            if all(isinstance(x, Molecule) for x in test):
+                self._data[i] = molecule
+            else:
+                raise TypeError('Can set only for iterable data with Molecule type')
+        elif isinstance(molecule, Molecule):
+            self._data[i] = molecule
+        else:
+            return TypeError
+
+    def __repr__(self):
+        return self._data
 
 
 class Reaction(ReactionABC):

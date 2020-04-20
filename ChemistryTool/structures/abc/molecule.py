@@ -6,7 +6,7 @@ from ...periodictable.element import Element
 
 class MoleculeABC(IsomorphismABC, ABC):
     def __init__(self):
-        self._atoms: Dict[int, str] = {}
+        self._atoms: Dict[int, Element] = {}
         self._bonds: Dict[int, Dict[int, int]] = {}
 
     @abstractmethod
