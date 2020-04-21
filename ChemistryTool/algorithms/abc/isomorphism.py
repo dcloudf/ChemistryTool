@@ -3,6 +3,8 @@ from typing import Dict
 
 
 class IsomorphismABC(ABC):
+    __slots__ = ()
+
     @abstractmethod
     def get_mapping(self, other) -> Dict[int, int]:
         ...
