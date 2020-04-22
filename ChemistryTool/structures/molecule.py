@@ -4,21 +4,24 @@ from ..periodictable.element import Element
 
 
 class Molecule(Isomorphism, MoleculeABC):
-    def get_atom(self, number: int) -> Element:
+    __slots__ = ('_atoms', '_bonds', '_atoms_backup', '_bonds_backup')
+
+    def get_atom(self, number) -> Element:
         return self._atoms[number]
 
-    def get_bond(self, start_atom: int, end_atom: int) -> int:
+    def get_bond(self, start_atom, end_atom):
         return self._bonds[start_atom][end_atom]
 
-    def add_atom(self, element: Element, number: int):
+    def add_atom(self, element, number, charge):
         if not isinstance(number, int):
             raise TypeError('For adding atom should be a integer')
         elif number in self._atoms:
             raise IndexError('This atom has already exist')
         self._atoms[number] = element
+        element.attach(self, number)
         self._bonds[number] = {}
 
-    def add_bond(self, start_atom: int, end_atom: int, bond_type: int):
+    def add_bond(self, start_atom, end_atom, bond_type):
         if start_atom in self._atoms and end_atom in self._atoms:
             if start_atom == end_atom:
                 raise ValueError('Atom cannot have a bond with itself')
@@ -29,23 +32,23 @@ class Molecule(Isomorphism, MoleculeABC):
         else:
             raise KeyError('Before creating a bond you need to create atoms')
 
-    def delete_atom(self, number: int):
+    def delete_atom(self, number):
         del self._atoms[number]
         for i in self._bonds.pop(number):
             del self._bonds[i][number]
 
-    def delete_bond(self, start_atom: int, end_atom: int):
+    def delete_bond(self, start_atom, end_atom):
         del self._bonds[start_atom][end_atom]
         del self._bonds[end_atom][start_atom]
 
-    def update_atom(self, element: Element, number: int):
+    def update_atom(self, element, number):
         try:
             _ = self._atoms[number]
             self._atoms[number] = element
         except KeyError:
             print('Atom has not exist or have unacceptable index')
 
-    def update_bond(self, start_atom: int, end_atom: int, bond_type: int):
+    def update_bond(self, start_atom, end_atom, bond_type):
         try:
             if isinstance(bond_type, int):
                 raise TypeError('Bond type should be a integer')
