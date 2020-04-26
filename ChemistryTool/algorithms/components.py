@@ -32,5 +32,17 @@ class Components(ComponentsABC):
         bonds = self._bonds
         return sum(len(x) for x in bonds.values()) // 2 - len(bonds) + self.connected_components_count
 
+    @property
+    def get_linked_rings(self):
+        while True:
+            try:
+                loner = (k for k, v in self._bonds.items() if len(v) <= 1)
+            except StopIteration:
+                break
+            del self._atoms[loner]
+            for i in self._bonds.pop(loner):
+                del self._bonds[i][loner]
+        return self._atoms, self._bonds
+
 
 __all__ = ['Components']
